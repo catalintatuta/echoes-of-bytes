@@ -1,0 +1,201 @@
+<!doctype html><html><head><meta charset="UTF-8"><title>Three.js FPS Demo | Venolabs</title><link rel="preconnect" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://fonts.gstatic.com"><style>@keyframes rotation {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(359deg);
+        }
+      }
+      @font-face {
+          font-family: 'Arcade Alternate';
+          src: url('src/assets/fonts/ArcadeAlternate.ttf');
+      }
+      body{
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        color: white;
+      }
+      #crosshair{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2%;
+        transform: translate(-50%, -50%);
+      }
+      #item_counter{
+        position: absolute;
+        right: 5%;
+        bottom: 5%;
+        font-size: 3em;
+      }
+      #progress{
+        position: absolute;
+        bottom: 9%;
+        left: 0;
+        width: 0;
+        height: 2%;
+        background-color: white;
+      }
+      #game_hud{
+        visibility: hidden;
+      }
+      #menu,#endgame,#intro{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        visibility: hidden;
+        user-select: none;
+      }
+      #intro{
+        overflow: scroll;
+      }
+      #endgame{
+          opacity: 0;
+          transition: opacity 3s;
+      }
+      h1{
+        font-family: 'Arcade Alternate';
+        font-size: 4em;
+      }
+      .main_menu_button {
+          background-color: rgba(0,0,0,0);
+          color: rgb(221, 221, 221);
+          font-size: 1.5em;
+          border: none;
+          cursor: pointer;
+          margin-top: 3em;
+          font-weight: 700;
+      }
+      #debug{
+        position: absolute;
+        right: 5%;
+        top: 5%;
+      }
+      .flex_row {
+          display: flex;
+          flex-direction: row;
+          gap: 20px;
+          margin-bottom: 20px;
+      }
+      .flex_column {
+          display: flex;
+          flex-direction: column;
+      }
+      .center {
+          align-items: center;
+      }
+      .fullscreen_wrapper {
+          position: absolute;
+          visibility: hidden;
+          display: flex;
+          width: 100%;
+          height: 100%;
+          justify-content: center;
+          align-items: center;
+      }
+      #dialog_box {
+          width: 50vw;
+          height: calc(30vh + 80px);
+          padding: 20px;
+          border-radius: 13px;
+          background: rgb(43 147 176 / 54%);
+          box-shadow: 0px 0px 89px 65px rgb(38 38 38 / 36%);
+          user-select: none;
+      }
+      #inventory_box {
+          width: 25vw;
+          height: 60vh;
+          padding: 20px;
+          border-radius: 13px;
+          background: rgb(43 147 176 / 54%);
+          box-shadow: 0px 0px 89px 65px rgb(38 38 38 / 36%);
+          user-select: none;
+          /*position: relative;*/
+      }
+      .dialog_button {
+          background-color: rgba(0,0,0,0);
+          color: rgb(221, 221, 221);
+          font-size: 1.5em;
+          border: none;
+          cursor: pointer;
+      }
+      .delete_button {
+          background-color: #27292b94;
+          color: rgb(221, 221, 221);
+          font-size: 1.5em;
+          border: none;
+          cursor: pointer;
+          align-self: flex-end;
+      }
+      .item_image {
+          padding-right: 20px;
+          height: 30vh;
+          min-width: 15vw;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+      }
+      .item_description {
+          font-style: italic;
+          background: rgb(169 220 234 / 85%);
+          padding: 10px 10px 10px 0;
+          color: rgb(7 18 21);
+      }
+      #pick_answer {
+          background: rgb(24 89 107 / 50%);
+      }
+      #delete_item_answer {
+          visibility: hidden;
+          top: 0;
+          left: 0;
+      }
+      #delete_item_answer > div {
+          background: #333;
+      }
+      #full_inventory {
+          display: none;
+          background: rgb(24 89 107 / 50%);
+      }
+      #close_inventory {
+          align-self: flex-end;
+      }
+      .intro_description {
+          width: 80vw;
+      }
+      #items_list {
+          background: rgb(24 89 107 / 50%);
+          font-size: 0.7em;
+          height: calc(100% - 30px);
+          overflow: scroll;
+      }
+      #items_list .item_image {
+          height: 6vh;
+          min-width: 3vw;
+      }
+      #items_list .flex_row {
+          gap: 10px;
+          margin-bottom: 10px;
+      }
+      #items_list h3 {
+          margin-top: 0;
+      }
+      #boring_avatar {
+          border: 0;
+          background: white;
+          border-radius: 50%;
+          animation: rotation 10s infinite linear;
+      }
+      #endgame_list {
+          max-height: 25vh;
+          width: 50vw;
+          padding: 0 20px;
+          border-radius: 10px;
+          background: #333;
+          overflow: scroll;
+      }</style></head><body><div id="debug"></div><div id="menu"><h1>ECHOES OF BYTES</h1><button id="show_intro" class="main_menu_button">new game</button></div><div id="intro"><h2>What’s this about? Well…</h2><p class="intro_description">Players step into the shoes of a virtual anthropologist tasked with navigating through the digital artifacts of various individuals. As they sift through each digital property, players uncover fragments of personal stories, cultural trends, and societal norms embedded within the digital artifacts. Through this interactive experience, players gain insights into the diverse ways in which individuals construct and navigate their digital identities within broader socio-cultural contexts.</p><p class="intro_description"><em>How might this immersive experience illuminate the intricate dance between individual identities and the rich tapestry of societal norms? In sifting through files, photos, and other personal digital artifacts, what fragments of personal narratives do you envision piecing together?</em></p><h2>Instructions</h2><p class="intro_description">Use <strong>WASD</strong> and the <strong>cursor</strong> to move<br/><strong>Click</strong> on items to pick them up<br/>Press <strong>I</strong> to open the inventory</p><button id="start_game" class="main_menu_button">start</button></div><div id="endgame"><h1>The End</h1><iframe id="boring_avatar" width="80" height="80"></iframe><h2>You collected:</h2><div class="flex_column" id="endgame_list"><h3>No Items</h3></div><button id="retry" class="main_menu_button">try again?</button></div><div class="fullscreen_wrapper" id="inventory"><div id="inventory_box"><div class="flex_column"><button id="close_inventory" class="dialog_button">✖</button></div><div class="fullscreen_wrapper" id="delete_item_answer"><div class="flex_column center"><p>Deleting is permanent. Are you sure?</p><div class="flex_row"><button class="dialog_button" id="confirm_delete">yes</button> <button class="dialog_button" id="decline_delete">no</button></div></div></div><div class="flex_column" id="items_list"></div></div></div><div class="fullscreen_wrapper" id="dialog"><div id="dialog_box"><div id="dialog_item_parent"></div><div class="flex_column center" id="pick_answer"><p>Pick it up ?</p><div class="flex_row"><button class="dialog_button" id="confirm_item">yes</button> <button class="dialog_button" id="decline_item">no</button></div></div><div class="flex_column center" id="full_inventory"><p>Your inventory is full, you can't pick this up.</p><div class="flex_row"><button class="dialog_button" id="close_dialog">ok</button></div></div></div></div><div id="game_hud"><img id="crosshair" src="90bb20fb10e73ac2d4cc27b781cf59cc.png"/><div id="item_counter"><span id="item_count"></span> <span>|</span> <span id="max_items"></span></div></div><div id="progress"></div><my-app></my-app><script src="main.274aa1f2fa26b9ad9139.js"></script></body></html>
